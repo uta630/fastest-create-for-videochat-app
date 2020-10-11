@@ -1,5 +1,5 @@
 const socket = io('/'); // socket.ioがサーバーでセットしたlocalhost3030のルートパスとコネクトする
-const myPeer = new Peer(); // WebRTCを利用したP2P通信が簡単に実装できるライブラリ
+const myPeer = new Peer(); // WebRTCを利用したP2P通信が簡単に実装できるライブラリ（http://yankee.cv.ics.saitama-u.ac.jp/~kunolab/yoshimi/peerjs-master/docs/）
 
 // Peerオブジェクトは生成時、ランダムなIDが付与されます, ここではuserId
 myPeer.on('open', userId => {
