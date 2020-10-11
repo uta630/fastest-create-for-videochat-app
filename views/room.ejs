@@ -8,6 +8,9 @@
     const ROOM_ID = "<%= roomId %>"; // ejs内でrenderのオブジェクトの値を受け取る記法
     console.log(ROOM_ID); // uuid
   </script>
+  <!-- deferをつけてDOMのレンダリングまでjsの読み込みを待つようにしておこう -->
+  <script src="/socket.io/socket.io.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
   Hello world

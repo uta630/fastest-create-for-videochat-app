@@ -25,6 +25,21 @@ app.get('/', (req, res) => {
 
 // :roomで、uuidV4で生成されたリダイレクト先をレンダリング
 app.get('/:room', (req, res) => {
-  // 第２引数のroomIdでuuidのidを取得
+  // 第２引数のroomIdでuuidのidを取得 → ejs（テンプレート）で取得
   res.render('room', { roomId: req.params.room });
+})
+
+// ユーザーが接続されるたびに走るイベントハンドラ
+io.on('connection', socket => { // connection : イベント名
+  // ルームにユーザーが入ってきたときのイベント
+  // join-room = イベント名
+  socket.on('join-room', (roomId, userId) => {
+    // console.log({roomId, userId}); // serverのログに出力される
+
+    socket.join(roomId); // roomへの入室, 新規ユーザーの追加
+    socket
+      .to(roomId) // roomを設定
+      .broadcast // 送信元以外のクライアントに送信する設定
+      .emit('user-connected', userId); // user-connected : イベント名, userId : 送信データ
+  })
 })
