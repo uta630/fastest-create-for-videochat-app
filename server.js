@@ -34,7 +34,7 @@ io.on('connection', socket => { // connection : イベント名
   // ルームにユーザーが入ってきたときのイベント
   // join-room = イベント名
   socket.on('join-room', (roomId, userId) => {
-    // console.log({roomId, userId}); // serverのログに出力される
+    console.log({roomId, userId}); // serverのログに出力される
 
     socket.join(roomId); // roomへの入室, 新規ユーザーの追加
     socket
