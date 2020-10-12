@@ -17,6 +17,25 @@ const addVideoStream = (video, stream) => {
   videoWrap.append(video); // videoの出力
 };
 
+// 新しいユーザーが接続されたら実行する関数
+const connectToNewUser = (userId, stream) => {
+  const call = myPeer.call(userId, stream); // callで自分の情報を渡すことで、指定したuserIdに紐づくpeerに対してvideo情報を送信できる
+  const video = document.createElement('video'); // 受信したvideoんも生成
+
+  // streamイベントで受信
+  // 送信したcall（上で定義した定数で呼んでるcall）に対して相手の応答があった場合
+  // 相手のstream情報が返ってくる = userVideoStream
+  call.on('stream', (userVideoStream) => {
+    // 受け取ったstream情報を渡してvideoを出力
+    addVideoStream(video, userVideoStream);
+  });
+
+  // videoのコネクトが切断された時（close）にvideoを取り除く
+  call.on('close', () => {
+    video.remove(); // videoの取り除き
+  });
+};
+
 // getUserMedia API : ユーザーの使用しているデバイスのメディアを取得
 // optionでvideo/audioの取得を指定することで、ビデオデータとオーディオを取得
 navigator.mediaDevices.getUserMedia({
@@ -25,7 +44,22 @@ navigator.mediaDevices.getUserMedia({
 }).then((stream) => { // promise関数なのでthenで返り値を取得, 引数に動画情報が入る
   // メディアを取得できたらvideoを出力
   addVideoStream(myVideo, stream);
-})
+
+  // 応答処理
+  myPeer.on("call", (call) => {
+    // 自分のstreamを追加
+    call.answer(stream);
+    const video = document.createElement('video');
+    call.on('strema', userVideoStream => {
+      addVideoStream(video, userVideoStream);
+    })
+  });
+
+  // user-connectedイベントの時に実行するアクション
+  socket.on('user-connected', (userId) => {
+    connectToNewUser(userId, stream);
+  });
+});
 
 // Peerオブジェクトは生成時、ランダムなIDが付与されます, ここではuserId
 myPeer.on('open', userId => {
@@ -35,8 +69,3 @@ myPeer.on('open', userId => {
   // userId : 仮のIDを使用
   socket.emit('join-room', ROOM_ID, userId); // socket.on('join-room'...のclgに紐づく
 });
-
-// user-connectedイベントの時に実行するアクション
-socket.on('user-connected', userId => {
-  console.log(userId)
-})
