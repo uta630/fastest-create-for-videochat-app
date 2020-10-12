@@ -9,7 +9,7 @@ const io = require('socket.io')(server); // socket.io側にどのサーバーで
 const { v4: uuidV4 } = require('uuid'); // v4をuuidV4にリネーム
 
 // server起動
-server.listen(process.env.PORT || 8080);
+server.listen(process.env.PORT || 3030);
 
 // ejsをviewのテンプレートエンジンとして設定
 app.set('view engine', "ejs");
