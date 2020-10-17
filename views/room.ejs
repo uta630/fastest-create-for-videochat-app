@@ -19,6 +19,21 @@
     <div class="main__wrap">
       <!-- videoの主力先 -->
       <div id="video-wrap"></div>
+
+      <!-- コントーラ -->
+      <div id="video__controller">
+        <button type="button" class="btn__action" onclick="playStop(this)">
+          <img src="images/video.png" alt="videoアイコン" />
+        </button>
+
+        <button type="button" class="btn__action" onclick="muteUnmute(this)">
+          <img src="images/mic.png" alt="micアイコン" />
+        </button>
+
+        <button type="button" class="btn__action" onclick="leaveVideo(this)">
+          <img src="images/call.png" alt="callアイコン" />
+        </button>
+      </div>
     </div>
   </div>
 </body>
