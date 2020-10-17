@@ -6,6 +6,9 @@ const myVideo = document.createElement('video');
 myVideo.muted = true; // 自分の声がデバイスから反射するのを防ぐ
 const videoWrap = document.getElementById('video-wrap'); // videoの出力先DOMのID
 
+// ユーザーごとにpeer情報を含むメディアアクションを保存する
+const peers = {};
+
 // <video>に受け取ったストリームを追加する関数
 const addVideoStream = (video, stream) => {
   video.srcObject = stream;
@@ -35,6 +38,9 @@ const connectToNewUser = (userId, stream) => {
   call.on('close', () => {
     video.remove(); // videoの取り除き
   });
+
+  // 切断処理用 : 新規ユーザーのメディア情報はcallで受け取っているので代入
+  peers[userId] = call;
 };
 
 // getUserMedia API : ユーザーの使用しているデバイスのメディアを取得
@@ -57,13 +63,21 @@ navigator.mediaDevices.getUserMedia({
     call.on('stream', userVideoStream => {
       addVideoStream(video, userVideoStream);
     });
+
+    // 切断処理用 : 自身のメディア情報はcallで受け取っているので代入
+    const userId = call.peer;
+    peers[userId] = call;
   });
 
   // user-connectedイベントの時に実行するアクション
   socket.on('user-connected', (userId) => {
-    console.log('user-connected')
     connectToNewUser(userId, stream);
   });
+});
+
+// user-disconnectedイベント
+socket.on('user-disconnected', (userId) => {
+    if(peers[userId]) peers[userId].close() ; // close() : コネクションの削除（video画面ごと削除される）
 });
 
 // Peerオブジェクトは生成時、ランダムなIDが付与されます, ここではuserId

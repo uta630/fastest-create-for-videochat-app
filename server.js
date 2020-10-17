@@ -40,6 +40,14 @@ io.on('connection', socket => { // connection : イベント名
     socket
       .to(roomId) // roomを設定
       .broadcast // 送信元以外のクライアントに送信する設定
-      .emit('user-connected', userId); // user-connected : イベント名, userId : 送信データ
+      .emit('user-connected', userId); // user-connected : イベント名, userId : 送信データ -> script.js内で呼び出す
+
+    // disconnect : ユーザーの切断処理
+    socket.on("disconnect", () => {
+      socket
+        .to(roomId) // 同一ルームのユーザーに送信
+        .broadcast // 送信元以外のクライアントに送信する設定
+        .emit("user-disconnected", userId); // user-disconnected : イベント名, userId : 送信データ -> script.js内で呼び出す
+    });
   })
 })
