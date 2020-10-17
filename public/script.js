@@ -48,13 +48,15 @@ navigator.mediaDevices.getUserMedia({
 
   // 応答処理
   myPeer.on("call", (call) => {
-    console.log('myPeer call')
-    // 自分のstreamを追加
+    // 既存ユーザーに新規ユーザーのstreamを追加
     call.answer(stream);
+
+    // 新規ユーザーに既存ユーザーのstreamを追加
     const video = document.createElement('video');
-    call.on('strema', userVideoStream => {
+    video.muted = true;
+    call.on('stream', userVideoStream => {
       addVideoStream(video, userVideoStream);
-    })
+    });
   });
 
   // user-connectedイベントの時に実行するアクション
