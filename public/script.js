@@ -21,6 +21,7 @@ const addVideoStream = (video, stream) => {
 const connectToNewUser = (userId, stream) => {
   const call = myPeer.call(userId, stream); // callで自分の情報を渡すことで、指定したuserIdに紐づくpeerに対してvideo情報を送信できる
   const video = document.createElement('video'); // 受信したvideoんも生成
+  video.muted = true;
 
   // streamイベントで受信
   // 送信したcall（上で定義した定数で呼んでるcall）に対して相手の応答があった場合
@@ -47,6 +48,7 @@ navigator.mediaDevices.getUserMedia({
 
   // 応答処理
   myPeer.on("call", (call) => {
+    console.log('myPeer call')
     // 自分のstreamを追加
     call.answer(stream);
     const video = document.createElement('video');
@@ -57,6 +59,7 @@ navigator.mediaDevices.getUserMedia({
 
   // user-connectedイベントの時に実行するアクション
   socket.on('user-connected', (userId) => {
+    console.log('user-connected')
     connectToNewUser(userId, stream);
   });
 });
